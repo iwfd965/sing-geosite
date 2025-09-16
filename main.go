@@ -60,10 +60,10 @@ func get(downloadURL *string) ([]byte, error) {
 
 func download(release *github.RepositoryRelease) ([]byte, error) {
 	geositeAsset := common.Find(release.Assets, func(it *github.ReleaseAsset) bool {
-		return *it.Name == "dlc.dat"
+		return *it.Name == "geosite.dat"
 	})
 	geositeChecksumAsset := common.Find(release.Assets, func(it *github.ReleaseAsset) bool {
-		return *it.Name == "dlc.dat.sha256sum"
+		return *it.Name == "geosite.dat.sha256sum"
 	})
 	if geositeAsset == nil {
 		return nil, E.New("geosite asset not found in upstream release ", release.Name)
@@ -416,13 +416,15 @@ func release(source string, destination string, output string, cnOutput string, 
 	if err != nil {
 		return err
 	}
-	setActionOutput("tag", *sourceRelease.Name)
+	tagName := strings.ReplaceAll(*sourceRelease.Name, " ", "-")
+	tagName = strings.ReplaceAll(tagName, "Released-on-", "")
+	setActionOutput("tag", tagName)
 	return nil
 }
 
 func main() {
 	err := release(
-		"v2fly/domain-list-community",
+		"Loyalsoldier/v2ray-rules-dat",
 		"sagernet/sing-geosite",
 		"geosite.db",
 		"geosite-cn.db",
